@@ -1,0 +1,57 @@
+# ---- START CMDS TO SETUP ----
+#
+# *** IMPORTANT ***
+# Only setup on the CLIENT machine, NOT the HOST machine
+# *** IMPORTANT ***
+# 
+# ----------------------------
+# 
+# Or setup it up manually
+# 
+# ----------------------------
+#
+# Switch to the root suer
+#  sudo su
+#
+# Make the script executable
+#  chmod +x /home/ubuntu/keg/keg-deploy/aws/keg-boot.sh
+#
+# Put the service file at /etc/systemd/system folder
+#  cp /home/ubuntu/keg/keg-deploy/aws/keg-boot.service /etc/systemd/system/keg-boot.service
+#
+# Ensure the permissions are correct
+# chmod 0644 /etc/systemd/system/keg-boot.service
+#
+# After adding this file, restart the daemon
+#  systemctl daemon-reload
+#
+# Enable the docker.service
+#  systemctl start docker
+#  systemctl enable docker
+#
+# Enable the keg-boot.service
+#  systemctl enable keg-boot.service
+#
+# To test, restart the server to ensure it's working 
+#  * Boot logs can be found in the /var/log/messages file
+#  * Example => sudo tail -n 500 /var/log/messages ( To see the last 500 lines )
+#
+# ---- END CMDS TO SETUP -----
+
+
+[Unit]
+Description=Keg Boot Service
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/su -c "/home/ubuntu/keg/keg-deploy/aws/keg-boot.sh" - ubuntu
+ExecStop=/bin/bash -c ""
+
+[Install]
+WantedBy=default.target
