@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set -e
-trap 'echo "Finished with exit code $?"' EXIT
-
 # REPO_LOC=keg/va-platform-backend
 # APP_NAME=vab
 # GIT_URL=https://github.com/simpleviewinc/va-platform-backend.git
@@ -84,7 +81,7 @@ keg_script_setup(){
 keg_remove_repo(){
 
   if [[ -z "$KEG_AUTO_REPO_LOC" ]] || [[ "$KEG_AUTO_REPO_LOC" == "/" ]] || [[ "$KEG_AUTO_REPO_LOC" == "/home/ubuntu/" ]]; then
-    KEG_EXIT="No \"REPO_LOC\" Tag defined on the instance!"
+    KEG_EXIT="No \"REPO_LOC\" Tag defined on the EC2 Instance!"
     return
 
   else
@@ -119,18 +116,19 @@ keg_start_task(){
 # ----- Run the Script ----- #
 
 if [[ -z "$REPO_LOC" ]] || [[ "$REPO_LOC" == "/" ]]; then
-  keg_error "No \"REPO_LOC\" Tag defined on the instance!"
+  keg_error "No \"REPO_LOC\" Tag defined on the EC2 Instance!"
+  exit 1
 else
 
   export KEG_AUTO_REPO_LOC="/home/ubuntu/$REPO_LOC"
 
   if [[ -z "$GIT_URL" ]]; then
-    keg_error  "No \"GIT_URL\" Tag defined on the instance!"
+    keg_error  "No \"GIT_URL\" Tag defined on the EC2 Instance!"
     return
   fi
 
   if [[ -z "$APP_NAME" ]]; then 
-    keg_error "No \"APP_NAME\" Tag defined on the instance!"
+    keg_error "No \"APP_NAME\" Tag defined on the EC2 Instance!"
     return
   fi
 

@@ -13,6 +13,7 @@ fi
 
 # Ensure the AWS CLI is installed
 sudo apt install -y awscli
+aws configure
 
 # Make the script executable
 sudo chmod +x /home/ubuntu/keg/keg-deploy/aws/keg-boot.sh
