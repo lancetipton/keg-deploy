@@ -11,6 +11,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# Ensure the AWS CLI is installed
+sudo apt install -y awscli
+
 # Make the script executable
 sudo chmod +x /home/ubuntu/keg/keg-deploy/aws/keg-boot.sh
 
