@@ -11,17 +11,22 @@ keg_setup_path_envs(){
   if [[ -z "$DOC_MOUNTED_PATH" ]]; then
     export DOC_MOUNTED_PATH=/keg/mounted
   fi
+  
+  # Check if a mounted path is set
+  if [[ -z "$DOC_TERRAFORM_PATH" ]]; then
+    export DOC_TERRAFORM_PATH=/keg/terraform
+  fi
 }
 
+# Setes terraform path envs to real files or stub files incase a file does not exist
 keg_tf_mounted_or_stub(){
-  local KEG_MOUNTED_STUB=$DOC_APP_PATH/mounted
+  local KEG_FILE_STUB=$DOC_APP_PATH/mounted
 
   if [[ -f "$2" ]]; then
     export TF_VAR_$1=$2
   else
-    export TF_VAR_$1=$KEG_MOUNTED_STUB/$3
+    export TF_VAR_$1=$KEG_FILE_STUB/$3
   fi
-
 }
 
 # Adds terraform envs as needed
@@ -31,6 +36,10 @@ keg_setup_tf_envs(){
   keg_tf_mounted_or_stub "keg_ssh_key_private" "$KEG_KEY_PATH" "ssh/$KEG_KEY"
   keg_tf_mounted_or_stub "keg_sever_provision" "$DOC_MOUNTED_PATH/provision.sh" "provision.sh"
   keg_tf_mounted_or_stub "keg_server_env" "$DOC_MOUNTED_PATH/server.env" "server.env"
+
+  # Add the stub for the default provision.sh file
+  # Uses the mounted/provision.sh file stub when the terraform provision file does not exist 
+  keg_tf_mounted_or_stub "keg_ec2_provision" "$DOC_TERRAFORM_PATH/provision.sh" "provision.sh" "terraform"
 
   # Only override the region if the ENV eixsts
   # Defaults to us-west-2

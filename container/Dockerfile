@@ -1,3 +1,8 @@
+# TODO: Add git clone of keg-deploy here with the GIT_KEY env
+# Use the FROM directive to load the git key here, as an arg
+# Then copy into the $KEG_BASE_IMAGE image
+# This way the git key is secure, and we can get a new copy of the keg-deploy repo
+
 # Define the image args before the FROM directive
 # Allows overwriting them if needed
 ARG KEG_BASE_IMAGE=node:14.16.0-alpine
@@ -62,6 +67,7 @@ RUN if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_APP_URL" ]; then \
     rm -rf /keg-temp; \
     cd $DOC_APP_PATH; \
     cp -r $DOC_APP_PATH/mounted /keg/mounted; \
+    cp -r $DOC_APP_PATH/terraform /keg/terraform; \
     yarn install --ignore-engines; \
     yarn cache clean; \
     echo "#!/bin/bash" >> /root/.bashrc; \

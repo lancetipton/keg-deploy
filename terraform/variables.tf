@@ -7,12 +7,12 @@ variable "keg_sever_provision" {
   default = "/keg/mounted/provision.sh"
 }
 
-variable "keg_ec2_provision" {
-  default = "/keg/app/terraform/provision.sh"
-}
-
 variable "keg_ssh_key_public" {
   default = "/keg/mounted/ssh/keg-deploy-ssh.pub"
+}
+
+variable "keg_ec2_provision" {
+  default = "/keg/terraform/provision.sh"
 }
 
 variable "keg_ssh_key_private" {
