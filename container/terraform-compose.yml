@@ -1,0 +1,5 @@
+version: "3.8"
+services:
+  keg-deploy:
+    volumes:
+      - ${KEG_TERRAFORM_PATH}:${DOC_TERRAFORM_PATH}

@@ -1,0 +1,20 @@
+{
+  "name": "keg-deploy",
+  "version": "0.0.0",
+  "description": "Deploy keg taps and apps using terraform",
+  "main": "index.js",
+  "repository": "https://github.com/lancetipton/keg-deploy.git",
+  "author": "Lance Tipton <lancetipton04@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "deploy:cli": "node ./deploy/cli/index.js",
+    "task": "node ./tasks/runTask.js"
+  },
+  "dependencies": {
+    "@keg-hub/args-parse": "6.2.1",
+    "@keg-hub/ask-it": "0.0.1",
+    "@keg-hub/jsutils": "8.2.0",
+    "@keg-hub/spawn-cmd": "0.1.0"
+  }
+}
