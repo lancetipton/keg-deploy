@@ -1,62 +1,21 @@
 const fs = require('fs')
 const path = require('path')
-const { deepMerge, snakeCase, exists } = require('@keg-hub/jsutils')
-const rootDir = path.join(__dirname, '../../../')
+const { awsDir } = require('../../utils/paths')
+const { addEnv } = require('../../utils/process/addEnv')
+const { deepMerge, snakeCase, exists, get } = require('@keg-hub/jsutils')
+const { validateLocation } = require('../../utils/validation/validateLocation')
+const { validateEnvLocation } = require('../../utils/validation/validateEnvLocation')
 
 /**
- * Error handler for when a custom terraform folder is passed, but can not be found
- * @param {string} abs - Absolute path of the passed in folder location
- * @param {string} relative - Relative path from the Keg-Deploy root, to the custom folder location
- *
- * @returns {void}
+ * Validates a local folder exists, and then adds a corresponding ENV when it does
+ * @param {string} location - Folder to check if it exists
+ * @param {Object} ENV - Name of the env to set the location value to
  */
-const noTerraformLocation = (abs, relative) => {
-  throw new Error(
-    `Invalid Terraform folder location. Folder does not exist at`,
-    `Absolute: ${abs}`,
-    `Relative: ${relative}`,
-  )
-}
-
-/**
- * Sets an env variable needed when running the deploy container
- * Adds a KEG prefix to all ENVs
- * @param {string} name - Name of the ENV to set, without the KEG prefix
- * @param {*} value - Value of the ENV to set
- */
-const addAsEnv = (name, value) => {
-  const envName = `KEG_` + snakeCase(name).toUpperCase()
-  process.env[envName] = value
-}
-
-/**
- * Checks the location for the custom terraform folder mount
- * If it, or the KEG_TERRAFORM_PATH env exist, then it sets the ENVs to allow mounting it
- * @param {string} location - Location of a custom terraform folder path
- *
- * @returns {void}
- */
-const validateTerraformConfig = location => {
-  // If no location just return
-  if(exists(location)){
-    // Try the absolute path, and return the location if it exists
-    if(fs.existsSync(location)) return location
-    
-    // Then try the path relative to the keg-deploy root directory
-    const relative = path.join(rootDir, location)
-    return fs.existsSync(relative)
-      ? relative
-      : noTerraformLocation(location, relative)
-
-    // Set the KEG_TERRAFORM_PATH env to the full path of the terraform folder
-    // Must be a folder exposed to docker to allow volume mounts
-    if(fullPath) process.env['KEG_TERRAFORM_PATH'] = fullPath
-  }
-
-  // If the KEG_TERRAFORM_PATH file exists, then add the compose file for mounting it
-  // Set the internal Keg-CLI KEG_COMPOSE_REPO env for loading alternate docker-compose config files
-  process.env['KEG_TERRAFORM_PATH'] &&
-    (process.env['KEG_COMPOSE_REPO'] = path.join(rootDir, 'container/terraform-compose.yml'))
+const addLocationEnv = (location, ENV, defaultLoc) => {
+  // Get the path to the location or use the default
+  const fullPath = validateLocation(location) || defaultLoc
+  // Add the path as an env to the current process
+  fullPath && addEnv(ENV, fullPath)
 }
 
 /**
@@ -65,12 +24,25 @@ const validateTerraformConfig = location => {
  * @param {Object} args - See task definition below
  */
 const buildDeployArgs = async args => {
-  const { params } = args
-  const { cmd, aws, terraform, ...otherParams } = params
-  addAsEnv(`AWS_CREDS_PATH`, aws)
-  addAsEnv(`KEG_DEPLOY_CMD`, cmd)
+  const { params, globalConfig } = args
+  const { app, aws, cmd, terraform, ...otherParams } = params
 
-  validateTerraformConfig(terraform)
+  addEnv(`KEG_DEPLOY_CMD`, cmd)
+  addLocationEnv(`AWS_CREDS_PATH`, aws, awsDir)
+
+  validateEnvLocation(
+    app,
+    'KEG_MOUNTED_PATH',
+    'KEG_COMPOSE_REPO',
+    'container/mounted-compose.yml'
+  )
+
+  validateEnvLocation(
+    terraform,
+    'KEG_TERRAFORM_PATH',
+    'KEG_COMPOSE_DEPLOY',
+    'container/terraform-compose.yml'
+  )
 
   return deepMerge(args, { params: otherParams })
 }
@@ -110,6 +82,14 @@ module.exports = {
         example: 'keg deploy start --terraform /custom/terraform/folder',
         description: 'Path to a custom terraform folder to mount. Folder must be exposed to Docker.',
       },
+      aws: {
+        example: 'keg deploy start --aws ~/.aws',
+        description: 'Path to the host machines aws credentials folder',
+      },
+      app: {
+        example: 'keg deploy start --app ~/my-deploy-app',
+        description: 'Path to the host machines deploy app configuration files',
+      },
       exec: {
         alias: [ 'execute' ],
         allowed: [ 'cli', 'bash' ],
@@ -117,10 +97,6 @@ module.exports = {
         description: 'Command to execute when the container starts. Defaults to the Deploy-CLI',
         default: 'cli'
       },
-      aws: {
-        example: 'keg deploy start --aws ~/.aws',
-        description: 'Path to the host machines aws credentials folder',
-      }
     }
   }
 }

@@ -39,6 +39,4 @@ services:
       - com.keg.path.values=${KEG_VALUES_FILE}
       - com.keg.path.docker=${KEG_DOCKER_FILE}
     volumes:
-      - ${KEG_CONTEXT_PATH}:${DOC_APP_PATH}
-      - ${KEG_MOUNTED_PATH}:${DOC_MOUNTED_PATH}:ro
       - ${KEG_AWS_CREDS_PATH}:${DOC_AWS_CREDS_PATH}:ro

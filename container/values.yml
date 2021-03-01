@@ -38,7 +38,7 @@ env:
   # Add a custom mounted folder into the docker container
   # Must overwrite the KEG_MOUNTED_PATH env with a local path
   # Will be mounted to /keg/mounted within the container
-  KEG_MOUNTED_PATH: "{{ cli.taps.deploy.path }}/mounted"
+  # KEG_MOUNTED_PATH: "{{ cli.taps.deploy.path }}/mounted"
   DOC_MOUNTED_PATH: /keg/mounted
   DOC_TERRAFORM_PATH: /keg/app/terraform
 
@@ -56,5 +56,5 @@ env:
   VERSION: 1.0.0
 
   # Git app url in github
-  GIT_APP_URL: https://github.com/lancetipton/keg-deploy.git
+  GIT_APP_URL: https://github.com/simpleviewinc/keg-deploy.git
   GIT_APP_BRANCH: master

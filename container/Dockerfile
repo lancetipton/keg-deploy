@@ -26,7 +26,7 @@ ENV TF_PACKAGE=$TF_PACKAGE
 # Copy over the the repo from the host machine
 ARG KEG_COPY_LOCAL
 
-ARG GIT_APP_URL=https://github.com/lancetipton/keg-deploy.git
+ARG GIT_APP_URL=https://github.com/simpleviewinc/keg-deploy.git
 ENV GIT_APP_URL=$GIT_APP_URL
 ARG GIT_APP_BRANCH=master
 ENV GIT_APP_BRANCH=$GIT_APP_BRANCH
