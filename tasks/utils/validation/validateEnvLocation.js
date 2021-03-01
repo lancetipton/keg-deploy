@@ -27,5 +27,5 @@ const validateEnvLocation = (location, pathEnv, composeEnv, composePath) => {
 
 
 module.exports = {
-  validateTerraformLocation
+  validateEnvLocation
 }
