@@ -1,4 +1,4 @@
-const { snakeCase } = require('@keg-hub/jsutils')
+const { exists, snakeCase } = require('@keg-hub/jsutils')
 
 /**
  * Sets an env variable needed when running the deploy container
@@ -7,6 +7,8 @@ const { snakeCase } = require('@keg-hub/jsutils')
  * @param {*} value - Value of the ENV to set
  */
 const addEnv = (name, value) => {
+  if(!exists(name) || !exists(value)) return
+
   const envName = `KEG_` + snakeCase(name).toUpperCase()
   process.env[envName] = value
 }

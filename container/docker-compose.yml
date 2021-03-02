@@ -24,6 +24,7 @@ services:
     environment:
       - DOC_APP_PATH
       - DOC_MOUNTED_PATH
+      - DOC_TERRAFORM_PATH
       - KEG_AWS_REGION
       - KEG_DOCKER_EXEC
       - KEG_DEPLOY_CMD

@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { awsDir } = require('../../utils/paths')
+const { awsDir, mountedDir, terraformDir } = require('../../utils/paths')
 const { addEnv } = require('../../utils/process/addEnv')
 const { deepMerge, snakeCase, exists, get } = require('@keg-hub/jsutils')
 const { validateLocation } = require('../../utils/validation/validateLocation')
@@ -25,23 +25,26 @@ const addLocationEnv = (location, ENV, defaultLoc) => {
  */
 const buildDeployArgs = async args => {
   const { params, globalConfig } = args
-  const { app, aws, cmd, terraform, ...otherParams } = params
+  const { app, aws, cmd, region, terraform, ...otherParams } = params
 
-  addEnv(`KEG_DEPLOY_CMD`, cmd)
-  addLocationEnv(`AWS_CREDS_PATH`, aws, awsDir)
+  addEnv(`KEG_AWS_REGION`, region)
+  cmd && addEnv(`KEG_DEPLOY_CMD`, cmd)
+  aws && addLocationEnv(`AWS_CREDS_PATH`, aws, awsDir)
 
   validateEnvLocation(
     app,
     'KEG_MOUNTED_PATH',
     'KEG_COMPOSE_REPO',
-    'container/mounted-compose.yml'
+    'container/mounted-compose.yml',
+     mountedDir
   )
 
   validateEnvLocation(
     terraform,
     'KEG_TERRAFORM_PATH',
     'KEG_COMPOSE_DEPLOY',
-    'container/terraform-compose.yml'
+    'container/terraform-compose.yml',
+    terraformDir
   )
 
   return deepMerge(args, { params: otherParams })
@@ -80,15 +83,20 @@ module.exports = {
       terraform: {
         alias: [ 'terra', 'tf', 'tfm' ],
         example: 'keg deploy start --terraform /custom/terraform/folder',
-        description: 'Path to a custom terraform folder to mount. Folder must be exposed to Docker.',
+        description: 'Path to a local terraform config folder. Folder must be exposed to Docker.',
       },
       aws: {
         example: 'keg deploy start --aws ~/.aws',
-        description: 'Path to the host machines aws credentials folder',
+        description: 'Path to the local aws credentials folder. Folder must be exposed to Docker.',
       },
       app: {
         example: 'keg deploy start --app ~/my-deploy-app',
-        description: 'Path to the host machines deploy app configuration files',
+        description: 'Path to the local app config folder. Folder must be exposed to Docker.',
+      },
+      region: {
+        example: 'keg deploy start --region us-east-1',
+        description: 'Aws region where terraform should be deployed',
+        default: 'us-west-2',
       },
       exec: {
         alias: [ 'execute' ],
