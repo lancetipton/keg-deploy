@@ -4,8 +4,6 @@
 ## Dependencies
 * The following dependencies required
   * [Docker](https://docs.docker.com/engine/installation/)
-  * [Yarn][https://classic.yarnpkg.com/en/docs/install]
-  * [Node][https://nodejs.org/en/download/]
   * [Keg-CLI](https://github.com/simpleviewinc/keg-cli) (*optional*) 
 
 > **Important** 
