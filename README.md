@@ -7,9 +7,13 @@
   * [Keg-CLI](https://github.com/simpleviewinc/keg-cli) (*optional*) 
 
 > **Important** 
+> <br/>
 > These steps all assume you have the keg-cli install on you machine
+> <br/>
 > It is possible to run all commands with out the keg-cli.
+> <br/>
 > But, those commands are not outlined here.
+
 
 ### Setup
 * Clone this repo => `git clone https://github.com/simpleviewinc/keg-deploy.git`
