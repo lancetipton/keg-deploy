@@ -11,7 +11,7 @@ const { validateEnvLocation } = require('../../utils/validation/validateEnvLocat
  * @param {string} location - Folder to check if it exists
  * @param {Object} ENV - Name of the env to set the location value to
  */
-const addLocationEnv = (location, ENV, defaultLoc) => {
+const addLocationEnv = (location, defaultLoc, ENV) => {
   // Get the path to the location or use the default
   const fullPath = validateLocation(location) || defaultLoc
   // Add the path as an env to the current process
@@ -29,7 +29,7 @@ const buildDeployArgs = async args => {
 
   addEnv(`KEG_AWS_REGION`, region)
   cmd && addEnv(`KEG_DEPLOY_CMD`, cmd)
-  aws && addLocationEnv(`AWS_CREDS_PATH`, aws, awsDir)
+  aws && addLocationEnv(aws, awsDir, `AWS_CREDS_PATH`)
 
   validateEnvLocation(
     app,
