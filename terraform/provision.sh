@@ -447,6 +447,14 @@ keg_setup(){
   # Reload the .bashrc after keg-cli setup, to ensure access to the keg exec in the terminal
   source ~/.bashrc
 
+  # TODO:
+  # 1. clone the zr-aws-health-checks repo
+  #   * cd to repo folder
+  #   * keg tap link hlc
+  #   * keg hlc start
+  # 2. create staging.env @ ~/.kegConfig/staging.env
+  #   * Set the ENV => KEG_PROXY_HOST=staging.keghub.io 
+
   # Start the keg-proxy container on the machine
   # To run:
   # bash provision.sh proxy

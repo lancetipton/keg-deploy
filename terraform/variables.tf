@@ -3,7 +3,7 @@ variable "keg_server_env" {
   default = "/keg/mounted/server.env"
 }
 
-variable "keg_sever_provision" {
+variable "keg_server_provision" {
   default = "/keg/mounted/provision.sh"
 }
 
