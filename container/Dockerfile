@@ -5,7 +5,7 @@
 
 # Define the image args before the FROM directive
 # Allows overwriting them if needed
-ARG KEG_BASE_IMAGE=node:14.16.0-alpine
+ARG KEG_BASE_IMAGE=docker.io/library/node:14.16.0-alpine
 FROM $KEG_BASE_IMAGE as keg-alpine
 
 WORKDIR /temp
@@ -66,7 +66,7 @@ RUN if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_APP_URL" ]; then \
     fi; \
     rm -rf /keg-temp; \
     cd $DOC_APP_PATH; \
-    cp -r $DOC_APP_PATH/mounted /keg/mounted; \
+    cp -r $DOC_APP_PATH/mounted/. /keg/mounted/; \
     cp -r $DOC_APP_PATH/terraform /keg/terraform; \
     yarn install --ignore-engines; \
     yarn cache clean; \

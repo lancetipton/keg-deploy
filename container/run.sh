@@ -18,7 +18,7 @@ keg_setup_path_envs(){
   fi
 }
 
-# Setes terraform path envs to real files or stub files incase a file does not exist
+# Sets terraform path envs to real files or stub files incase a file does not exist
 keg_tf_mounted_or_stub(){
   local KEG_FILE_STUB=$DOC_APP_PATH/mounted
 

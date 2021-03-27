@@ -9,6 +9,39 @@ keg_message(){
   return
 }
 
+# Create a tap-watchtower config with some default values to use
+# we will want to modify this with the list of containers we want to watch whenever we
+# add a new repo to the server
+keg_setup_watchtower_config() {
+  local CONFIG_OUT_PATH="$HOME/watchtower.config.js"
+  local CONFIG_URI="https://raw.githubusercontent.com/simpleviewinc/tap-watchtower/master/configs/watchtower-template.config.js"
+  curl -o "$CONFIG_OUT_PATH" "$CONFIG_URI"
+}
+
+# clone watchtower tap, install it, link it
+keg_setup_watchtower() {
+  local KEG_HUB_PATH="/home/ubuntu/keg-hub"
+  local TAPS_PATH="$KEG_HUB_PATH/taps"
+  local WATCHTOWER_PATH="$TAPS_PATH/tap-watchtower"
+
+  if [ ! -d "$WATCHTOWER_PATH" ]; then
+    git -C "$KEG_HUB_PATH/taps" clone https://github.com/simpleviewinc/tap-watchtower
+  fi
+
+  cd "$WATCHTOWER_PATH"
+
+  keg_cli_cmd "tap" "link" "watchtower"
+
+  yarn install
+}
+
+keg_start_watchtower () {
+  # starts the watchtower command, pipes output to w.out, but ensures that stdout is redirected to /dev/null
+  # so that it's not output to the user's stdout console, then also runs it in the background 
+  keg watchtower start --debug |& tee w.out &> /dev/null &
+}
+
+
 # Load the server.env file into the current session
 keg_load_deploy_envs(){
   local KEG_SERVER_ENVS=$HOME/server.env
@@ -454,6 +487,17 @@ keg_setup(){
   #   * keg hlc start
   # 2. create staging.env @ ~/.kegConfig/staging.env
   #   * Set the ENV => KEG_PROXY_HOST=staging.keghub.io 
+
+  # Start the tap-watchtower container on the machine
+  # To run:
+  # bash provision.sh watchtower
+  #  * Runs only the watchtower portion of this script
+  if [[ -z "$KEG_EXIT" ]] && [[ "$INIT_SETUP" || "$SETUP_TYPE" == "watchtower" ]]; then
+    keg_setup_watchtower_config
+    keg_setup_watchtower
+    keg_start_watchtower
+  fi
+
 
   # Start the keg-proxy container on the machine
   # To run:
