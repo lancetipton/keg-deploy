@@ -37,7 +37,7 @@ env:
   DOC_MOUNTED_PATH: /keg/mounted
   DOC_TERRAFORM_PATH: /keg/terraform
 
-  KEG_BASE_IMAGE: node:14.16.0-alpine
+  KEG_BASE_IMAGE: docker.io/library/node:14.16.0-alpine
   KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-deploy:master
 
   # --- DOCKER ENV CONTEXT --- #
