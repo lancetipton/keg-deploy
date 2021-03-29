@@ -14,31 +14,38 @@ keg_message(){
 # add a new repo to the server
 keg_setup_watchtower_config() {
   local CONFIG_OUT_PATH="$HOME/watchtower.config.js"
-  local CONFIG_URI="https://raw.githubusercontent.com/simpleviewinc/tap-watchtower/master/configs/watchtower-template.config.js"
+  local CONFIG_URI="https://raw.githubusercontent.com/simpleviewinc/tap-watchtower/develop/configs/watchtower-template.config.js"
   curl -o "$CONFIG_OUT_PATH" "$CONFIG_URI"
 }
 
 # clone watchtower tap, install it, link it
 keg_setup_watchtower() {
-  local KEG_HUB_PATH="/home/ubuntu/keg-hub"
+  local KEG_HUB_PATH="$HOME/keg-hub"
   local TAPS_PATH="$KEG_HUB_PATH/taps"
   local WATCHTOWER_PATH="$TAPS_PATH/tap-watchtower"
+  local WATCHTOWER_URL="github.com/simpleviewinc/tap-watchtower"
+  local WATCHTOWER_BRANCH="develop"
 
   if [ ! -d "$WATCHTOWER_PATH" ]; then
-    git -C "$KEG_HUB_PATH/taps" clone https://github.com/simpleviewinc/tap-watchtower
+    keg_install_repo "$WATCHTOWER_URL" "$WATCHTOWER_PATH" "$WATCHTOWER_BRANCH"
+    if [ "$?" -ne 0 ]; then
+      return 1
+    fi
   fi
+
 
   cd "$WATCHTOWER_PATH"
 
   keg_cli_cmd "tap" "link" "watchtower"
-
   yarn install
+  return 0
 }
 
 keg_start_watchtower () {
-  # starts the watchtower command, pipes output to w.out, but ensures that stdout is redirected to /dev/null
-  # so that it's not output to the user's stdout console, then also runs it in the background 
-  keg watchtower start --debug |& tee w.out &> /dev/null &
+  keg_message "Starting watchtower...."
+
+  # read $HOME/watchtower.config.js for this command's configuration
+  keg_cli_cmd "watchtower" "start"
 }
 
 
@@ -493,8 +500,10 @@ keg_setup(){
   # bash provision.sh watchtower
   #  * Runs only the watchtower portion of this script
   if [[ -z "$KEG_EXIT" ]] && [[ "$INIT_SETUP" || "$SETUP_TYPE" == "watchtower" ]]; then
+    keg_message "Setting up watchtower...."
     keg_setup_watchtower_config
     keg_setup_watchtower
+
     keg_start_watchtower
   fi
 
