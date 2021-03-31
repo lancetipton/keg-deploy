@@ -21,7 +21,7 @@ resource "aws_elb" "keg_elb" {
     instance_protocol  = "http"
     lb_port            = 443
     lb_protocol        = "https"
-    ssl_certificate_id = "arn:aws:acm:us-west-2:559862229312:certificate/8a675018-22c6-4161-ac4c-804f4207c18d"
+    ssl_certificate_id = var.aws_ssl_cert_id
   }
   listener {
     instance_port     = 80

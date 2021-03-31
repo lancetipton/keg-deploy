@@ -67,7 +67,7 @@ RUN if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_APP_URL" ]; then \
     rm -rf /keg-temp; \
     cd $DOC_APP_PATH; \
     cp -r $DOC_APP_PATH/mounted/. /keg/mounted/; \
-    cp -r $DOC_APP_PATH/terraform /keg/terraform; \
+    cp -r $DOC_APP_PATH/terraform/. /keg/terraform/; \
     yarn install --ignore-engines; \
     yarn cache clean; \
     echo "#!/bin/bash" >> /root/.bashrc; \
