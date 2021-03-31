@@ -3,7 +3,7 @@ variable "keg_server_env" {
   default = "/keg/mounted/server.env"
 }
 
-variable "keg_sever_provision" {
+variable "keg_server_provision" {
   default = "/keg/mounted/provision.sh"
 }
 
@@ -66,5 +66,10 @@ variable "aws_private_subnet_cidr" {
 variable "aws_private_subnet_av_zone" {
   description = "Availability Zone for the private subnet"
   default     = "us-west-2b"
+}
+
+variable "aws_ssl_cert_id" {
+  description = "ID of the SSL certificate managed by the AWS Certificate Manager (ACM)"
+  default     = "arn:aws:acm:us-west-2:559862229312:certificate/8a675018-22c6-4161-ac4c-804f4207c18d"
 }
 

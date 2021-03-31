@@ -9,13 +9,20 @@ resource "aws_instance" "keg_app" {
   source_dest_check           = false
   associate_public_ip_address = true
 
+  root_block_device {
+    volume_size = 512
+    tags = {
+      Name = "keg-volume"
+    }
+  }
+
   provisioner "file" {
     source      = var.keg_server_env
     destination = "/home/${var.aws_instance_user}/server.env"
   }
 
   provisioner "file" {
-    source      = var.keg_sever_provision
+    source      = var.keg_server_provision
     destination = "/home/${var.aws_instance_user}/mounted-provision.sh"
   }
 

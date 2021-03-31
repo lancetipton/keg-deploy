@@ -18,7 +18,7 @@ keg_setup_path_envs(){
   fi
 }
 
-# Setes terraform path envs to real files or stub files incase a file does not exist
+# Sets terraform path envs to real files or stub files incase a file does not exist
 keg_tf_mounted_or_stub(){
   local KEG_FILE_STUB=$DOC_APP_PATH/mounted
 
@@ -34,7 +34,7 @@ keg_setup_tf_envs(){
 
   keg_tf_mounted_or_stub "keg_ssh_key_public" "$KEG_KEY_PATH.pub" "ssh/$KEG_KEY.pub"
   keg_tf_mounted_or_stub "keg_ssh_key_private" "$KEG_KEY_PATH" "ssh/$KEG_KEY"
-  keg_tf_mounted_or_stub "keg_sever_provision" "$DOC_MOUNTED_PATH/provision.sh" "provision.sh"
+  keg_tf_mounted_or_stub "keg_server_provision" "$DOC_MOUNTED_PATH/provision.sh" "provision.sh"
   keg_tf_mounted_or_stub "keg_server_env" "$DOC_MOUNTED_PATH/server.env" "server.env"
 
   # Add the stub for the default provision.sh file

@@ -9,6 +9,46 @@ keg_message(){
   return
 }
 
+# Create a tap-watchtower config with some default values to use
+# we will want to modify this with the list of containers we want to watch whenever we
+# add a new repo to the server
+keg_setup_watchtower_config() {
+  local CONFIG_OUT_PATH="$HOME/watchtower.config.js"
+  local CONFIG_URI="https://raw.githubusercontent.com/simpleviewinc/tap-watchtower/develop/configs/watchtower-template.config.js"
+  curl -o "$CONFIG_OUT_PATH" "$CONFIG_URI"
+}
+
+# clone watchtower tap, install it, link it
+keg_setup_watchtower() {
+  local KEG_HUB_PATH="$HOME/keg-hub"
+  local TAPS_PATH="$KEG_HUB_PATH/taps"
+  local WATCHTOWER_PATH="$TAPS_PATH/tap-watchtower"
+  local WATCHTOWER_URL="github.com/simpleviewinc/tap-watchtower"
+  local WATCHTOWER_BRANCH="develop"
+
+  if [ ! -d "$WATCHTOWER_PATH" ]; then
+    keg_install_repo "$WATCHTOWER_URL" "$WATCHTOWER_PATH" "$WATCHTOWER_BRANCH"
+    if [ "$?" -ne 0 ]; then
+      return 1
+    fi
+  fi
+
+
+  cd "$WATCHTOWER_PATH"
+
+  keg_cli_cmd "tap" "link" "watchtower"
+  yarn install
+  return 0
+}
+
+keg_start_watchtower () {
+  keg_message "Starting watchtower...."
+
+  # read $HOME/watchtower.config.js for this command's configuration
+  keg_cli_cmd "watchtower" "start"
+}
+
+
 # Load the server.env file into the current session
 keg_load_deploy_envs(){
   local KEG_SERVER_ENVS=$HOME/server.env
@@ -446,6 +486,27 @@ keg_setup(){
 
   # Reload the .bashrc after keg-cli setup, to ensure access to the keg exec in the terminal
   source ~/.bashrc
+
+  # TODO:
+  # 1. clone the zr-aws-health-checks repo
+  #   * cd to repo folder
+  #   * keg tap link hlc
+  #   * keg hlc start
+  # 2. create staging.env @ ~/.kegConfig/staging.env
+  #   * Set the ENV => KEG_PROXY_HOST=staging.keghub.io 
+
+  # Start the tap-watchtower container on the machine
+  # To run:
+  # bash provision.sh watchtower
+  #  * Runs only the watchtower portion of this script
+  if [[ -z "$KEG_EXIT" ]] && [[ "$INIT_SETUP" || "$SETUP_TYPE" == "watchtower" ]]; then
+    keg_message "Setting up watchtower...."
+    keg_setup_watchtower_config
+    keg_setup_watchtower
+
+    keg_start_watchtower
+  fi
+
 
   # Start the keg-proxy container on the machine
   # To run:
