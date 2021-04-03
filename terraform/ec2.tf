@@ -4,7 +4,7 @@ resource "aws_instance" "keg_app" {
   key_name      = aws_key_pair.keg_public_ssh.key_name
 
   subnet_id              = aws_subnet.keg_public_subnet.id
-  vpc_security_group_ids = [aws_security_group.keg_sg_public.id]
+  vpc_security_group_ids = [aws_security_group.keg_sg_private.id]
 
   source_dest_check           = false
   associate_public_ip_address = true

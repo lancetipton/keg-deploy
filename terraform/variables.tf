@@ -73,3 +73,18 @@ variable "aws_ssl_cert_id" {
   default     = "arn:aws:acm:us-west-2:559862229312:certificate/8a675018-22c6-4161-ac4c-804f4207c18d"
 }
 
+variable "target_group_port" {
+  description = "The port to which the target group will forward requests on ec2 instances within that group"
+  default     = 80
+}
+
+variable "health_check_port" {
+  description = "The port to the health check process on the ec2 instance. The default is the traefik http://:8080/ping health check."
+  default     = 8080
+}
+
+variable "health_check_path" {
+  description = "The endpoint path to the health check on the ec2 instance. The default is the traefik http://:8080/ping."
+  default     = "/ping"
+}
+

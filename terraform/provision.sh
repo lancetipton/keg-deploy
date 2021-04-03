@@ -141,11 +141,11 @@ keg_install_compose(){
   fi
 }
 
-# Clones a repo and it's submodules
-# Only pulls a single branch when the branch name is passed as the last argument
+# Clones a repo and its submodules
+# Switches to a branch when the branch name is passed as the last argument
 keg_git_clone(){
   if [[ "$3" ]]; then
-    git clone --recurse-submodules --single-branch --branch $3 $1 $2
+    git clone --recurse-submodules --branch $3 $1 $2
   else
     git clone --recurse-submodules $1 $2
   fi

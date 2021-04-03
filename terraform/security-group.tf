@@ -57,6 +57,15 @@ resource "aws_security_group" "keg_sg_private" {
   }
 
   ingress {
+    description     = "all-traffic from the public and private security groups"
+    protocol        = "-1"
+    from_port       = 0
+    to_port         = 0
+    security_groups = [aws_security_group.keg_sg_public.id]
+    self            = true
+  }
+
+  ingress {
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
@@ -69,6 +78,7 @@ resource "aws_security_group" "keg_sg_private" {
     protocol    = "tcp"
     cidr_blocks = [var.aws_public_subnet_cidr]
   }
+
 
   egress {
     from_port   = 0
