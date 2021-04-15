@@ -35,7 +35,7 @@ variable "aws_instance_name" {
 
 variable "aws_instance_type" {
   description = "EC2 instance type"
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "aws_instance_user" {

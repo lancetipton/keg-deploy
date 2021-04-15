@@ -27,7 +27,7 @@ env:
 
   # The aws region is required by the provisioner, and not loaded from the config
   # So we set it here to allow it to be overwritten
-  # KEG_AWS_REGION: us-west-2
+  # TF_VAR_aws_region: us-west-2
 
   # Add a custom mounted folder into the docker container
   # Must set the KEG_<NAME>_PATH env with a local path

@@ -1,8 +1,6 @@
-const fs = require('fs')
-const path = require('path')
 const { awsDir, mountedDir, terraformDir } = require('../../utils/paths')
-const { addEnv } = require('../../utils/process/addEnv')
-const { deepMerge, snakeCase, exists, get } = require('@keg-hub/jsutils')
+const { addKegEnv, addTerraformEnv} = require('../../utils/process/addEnv')
+const { deepMerge } = require('@keg-hub/jsutils')
 const { validateLocation } = require('../../utils/validation/validateLocation')
 const { validateEnvLocation } = require('../../utils/validation/validateEnvLocation')
 
@@ -15,7 +13,7 @@ const addLocationEnv = (location, defaultLoc, ENV) => {
   // Get the path to the location or use the default
   const fullPath = validateLocation(location) || defaultLoc
   // Add the path as an env to the current process
-  fullPath && addEnv(ENV, fullPath)
+  fullPath && addKegEnv(ENV, fullPath)
 }
 
 /**
@@ -24,11 +22,11 @@ const addLocationEnv = (location, defaultLoc, ENV) => {
  * @param {Object} args - See task definition below
  */
 const buildDeployArgs = async args => {
-  const { params, globalConfig } = args
+  const { params } = args
   const { app, aws, cmd, region, terraform, ...otherParams } = params
 
-  addEnv(`KEG_AWS_REGION`, region)
-  cmd && addEnv(`KEG_DEPLOY_CMD`, cmd)
+  addTerraformEnv(`aws_region`, region)
+  cmd && addKegEnv(`KEG_DEPLOY_CMD`, cmd)
   aws && addLocationEnv(aws, awsDir, `AWS_CREDS_PATH`)
 
   validateEnvLocation(

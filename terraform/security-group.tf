@@ -1,3 +1,7 @@
+data "http" "ip" {
+  url = "https://checkip.amazonaws.com/"
+}
+
 resource "aws_security_group" "keg_sg_public" {
   name        = "keg-deploy-public-sg"
   description = "Allow incoming HTTP connections & SSH access"
@@ -49,6 +53,15 @@ resource "aws_security_group" "keg_sg_private" {
   name        = "keg-deploy-private-sg"
   description = "Allow traffic from public subnet"
 
+  # allow ssh for ip of machine running terraform apply
+  ingress {
+    description = "User IP (for terraform apply)"
+    from_port = 22 
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["${chomp(data.http.ip.body)}/32"] 
+  }
+
   ingress {
     from_port   = 3306
     to_port     = 3306
@@ -78,7 +91,6 @@ resource "aws_security_group" "keg_sg_private" {
     protocol    = "tcp"
     cidr_blocks = [var.aws_public_subnet_cidr]
   }
-
 
   egress {
     from_port   = 0

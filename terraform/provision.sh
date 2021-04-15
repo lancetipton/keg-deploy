@@ -24,7 +24,7 @@ keg_setup_watchtower() {
   local TAPS_PATH="$KEG_HUB_PATH/taps"
   local WATCHTOWER_PATH="$TAPS_PATH/tap-watchtower"
   local WATCHTOWER_URL="github.com/simpleviewinc/tap-watchtower"
-  local WATCHTOWER_BRANCH="develop"
+  local WATCHTOWER_BRANCH="master"
 
   if [ ! -d "$WATCHTOWER_PATH" ]; then
     keg_install_repo "$WATCHTOWER_URL" "$WATCHTOWER_PATH" "$WATCHTOWER_BRANCH"
@@ -486,14 +486,6 @@ keg_setup(){
 
   # Reload the .bashrc after keg-cli setup, to ensure access to the keg exec in the terminal
   source ~/.bashrc
-
-  # TODO:
-  # 1. clone the zr-aws-health-checks repo
-  #   * cd to repo folder
-  #   * keg tap link hlc
-  #   * keg hlc start
-  # 2. create staging.env @ ~/.kegConfig/staging.env
-  #   * Set the ENV => KEG_PROXY_HOST=staging.keghub.io 
 
   # Start the tap-watchtower container on the machine
   # To run:

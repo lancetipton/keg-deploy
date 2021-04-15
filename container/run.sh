@@ -40,26 +40,6 @@ keg_setup_tf_envs(){
   # Add the stub for the default provision.sh file
   # Uses the mounted/provision.sh file stub when the terraform provision file does not exist 
   keg_tf_mounted_or_stub "keg_ec2_provision" "$DOC_TERRAFORM_PATH/provision.sh" "provision.sh" "terraform"
-
-  # Only override these tf envs if the corresponding bash envs exist
-  # Defaults to us-west-2
-  if [[ "$KEG_AWS_REGION" ]]; then
-    export TF_VAR_aws_region=$KEG_AWS_REGION
-  fi
-
-  if [[ "$KEG_TARGET_GROUP_PORT" ]]; then
-    export TF_VAR_target_group_port=$KEG_TARGET_GROUP_PORT
-  fi
-
-  if [[ "$KEG_HEALTH_CHECK_PORT" ]]; then
-    export TF_VAR_health_check_port=$KEG_HEALTH_CHECK_PORT
-  fi
-
-  if [[ "$KEG_HEALTH_CHECK_PATH" ]]; then
-    export TF_VAR_health_check_path=$KEG_HEALTH_CHECK_PATH
-  fi
-
-  # Add other envs here as needed for terraform
 }
 
 # Setup envs and ssh keys for running terraform

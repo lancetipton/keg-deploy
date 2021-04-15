@@ -25,13 +25,16 @@ services:
       - DOC_APP_PATH
       - DOC_MOUNTED_PATH
       - DOC_TERRAFORM_PATH
-      - KEG_AWS_REGION
       - KEG_DOCKER_EXEC
       - KEG_DEPLOY_CMD
       - KEG_EXEC_CMD
       - ENV
       - NODE_ENV
       - CONTAINER_NAME
+      - TF_VAR_aws_region
+      - TF_VAR_target_group_port
+      - TF_VAR_health_check_port
+      - TF_VAR_health_check_path
     labels:
       - com.keg.env.context=keg-deploy
       - com.keg.path.context=${KEG_CONTEXT_PATH}
