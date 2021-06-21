@@ -32,13 +32,33 @@ keg_get_tag_value(){
 KEG_EXIT=""
 
 # ----- Define as Tags on the EC2 instance ----- #
+
+# Location of app to clone and run, 
+# relative to the ubuntu user's home directory
 REPO_LOC="$(keg_get_tag_value "REPO_LOC" "")"
+
+# Tap alias name for repo located at REPO_LOC. 
+# For example, "vab" for va-platform-backend
 APP_NAME="$(keg_get_tag_value "APP_NAME" "")"
+
+# Git url of repo to clone at REPO_LOC
 GIT_URL="$(keg_get_tag_value "GIT_URL" "")"
+
+# Environment: development or production
 ENVIRONMENT="$(keg_get_tag_value "ENVIRONMENT" "production")"
+
+# Git branch of repo to clone at REPO_LOC
 GIT_BRANCH="$(keg_get_tag_value "GIT_BRANCH" "master")"
+
+# Task to start on boot for the tap APP_NAME
 KEG_TASK="$(keg_get_tag_value "KEG_TASK" "start")"
+
+# Arguments to pass to the KEG_TASK
 KEG_TASK_ARGS="$(keg_get_tag_value "KEG_TASK_ARGS" "--build --service=no-sync")"
+
+# The command to run to setup the repo cloned at REPO_LOC. 
+# It will be run within the repo's root directory.
+APP_SETUP_COMMAND="$(keg_get_tag_value "APP_SETUP_COMMAND" "yarn install")"
 
 # ----- Helper Functions ----- #
 
@@ -57,7 +77,7 @@ keg_script_setup(){
 
   # Load in the bash env
   source /home/ubuntu/.bashrc
-  cd /home/ubuntu/keg
+  cd /home/ubuntu/keg-hub
   
   echo "-----------------------------------------------------------"
   echo ""
@@ -73,6 +93,7 @@ keg_script_setup(){
   echo "  GIT_BRANCH => $GIT_BRANCH"
   echo "  KEG_TASK => $KEG_TASK"
   echo "  KEG_TASK_ARGS => $KEG_TASK_ARGS"
+  echo "  APP_SETUP_COMMAND => $APP_SETUP_COMMAND"
   echo ""
 
 }
@@ -104,9 +125,11 @@ keg_clone_repo(){
 
   git clone --single-branch --branch $GIT_BRANCH $CLONE_URL $KEG_AUTO_REPO_LOC
 
+  # install dependencies
+  cd $KEG_AUTO_REPO_LOC && $APP_SETUP_COMMAND
 }
 
-# Stop the current processs
+# Start the current processs
 keg_start_task(){
   keg_message "Starting App with environment $ENVIRONMENT..."
   keg $APP_NAME $KEG_TASK --env $ENVIRONMENT $KEG_TASK_ARGS

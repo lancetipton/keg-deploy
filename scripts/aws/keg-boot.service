@@ -50,7 +50,7 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/bin/su -c "/home/ubuntu/keg/keg-deploy/aws/keg-boot.sh" - ubuntu
+ExecStart=/bin/su -c "/home/ubuntu/keg-hub/taps/keg-deploy/scripts/aws/keg-boot.sh" - ubuntu
 ExecStop=/bin/bash -c ""
 
 [Install]
